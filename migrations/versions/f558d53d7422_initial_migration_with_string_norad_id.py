@@ -1,8 +1,8 @@
-"""Initial migration
+"""Initial migration with string norad id
 
-Revision ID: 0dd95d232ec8
+Revision ID: f558d53d7422
 Revises: 
-Create Date: 2026-06-12 14:27:02.992451
+Create Date: 2026-06-13 14:43:18.271804
 
 """
 from typing import Sequence, Union
@@ -12,7 +12,7 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision: str = '0dd95d232ec8'
+revision: str = 'f558d53d7422'
 down_revision: Union[str, Sequence[str], None] = None
 branch_labels: Union[str, Sequence[str], None] = None
 depends_on: Union[str, Sequence[str], None] = None
@@ -30,14 +30,14 @@ def upgrade() -> None:
     sa.PrimaryKeyConstraint('id')
     )
     op.create_table('satellites',
-    sa.Column('norad_id', sa.Integer(), nullable=False),
+    sa.Column('norad_id', sa.String(length=5), nullable=False),
     sa.Column('name', sa.String(length=100), nullable=False),
     sa.Column('intl_designator', sa.String(length=20), nullable=True),
     sa.PrimaryKeyConstraint('norad_id')
     )
     op.create_table('tle_data',
     sa.Column('id', sa.Integer(), autoincrement=True, nullable=False),
-    sa.Column('satellite_id', sa.Integer(), nullable=False),
+    sa.Column('satellite_id', sa.String(length=5), nullable=False),
     sa.Column('epoch', sa.DateTime(), nullable=False),
     sa.Column('bstar', sa.Float(), nullable=False),
     sa.Column('inclination', sa.Float(), nullable=False),
@@ -47,6 +47,8 @@ def upgrade() -> None:
     sa.Column('mean_anomaly', sa.Float(), nullable=False),
     sa.Column('mean_motion', sa.Float(), nullable=False),
     sa.Column('rev_num_at_epoch', sa.Integer(), nullable=False),
+    sa.Column('line1', sa.String(length=70), nullable=False),
+    sa.Column('line2', sa.String(length=70), nullable=False),
     sa.ForeignKeyConstraint(['satellite_id'], ['satellites.norad_id'], ondelete='CASCADE'),
     sa.PrimaryKeyConstraint('id')
     )
