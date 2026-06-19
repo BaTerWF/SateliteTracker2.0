@@ -10,13 +10,13 @@ export default function Earth({ textures = {} }) {
   const EARTH_RADIUS_KM = 6371;
 
   // Convert km to Three.js units (scale factor)
-  const SCALE = 0.001;
+  const SCALE = 0.0003;
   const radius = EARTH_RADIUS_KM * SCALE;
 
   useFrame((state, delta) => {
     if (earthRef.current) {
       // Rotate earth slowly
-      earthRef.current.rotation.y += delta * 0.05;
+      earthRef.current.rotation.y += delta * 0;
     }
   });
 

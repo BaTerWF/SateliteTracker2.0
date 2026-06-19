@@ -53,7 +53,7 @@ export default function Sidebar({ satellites, onSatelliteSelect }) {
         ) : (
           filteredSatellites.map(satellite => (
             <div
-              key={satellite.id}
+              key={satellite.norad_id}
               className="satellite-item"
               onClick={() => onSatelliteSelect(satellite)}
             >

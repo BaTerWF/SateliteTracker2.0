@@ -10,6 +10,8 @@ export const satellitesAPI = {
   // Get satellite position
   getPosition: (id) => apiClient.get(`/api/v1/satellites/${id}/position`),
 
+  getOrbit: (id) => apiClient.get(`/api/v1/satellites/${id}/orbit`),
+
   // Create satellite
   create: (data) => apiClient.post('/api/v1/satellites', data),
 

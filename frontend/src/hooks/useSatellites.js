@@ -6,6 +6,7 @@ export function useSatellites() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
+  // 1. ПЕРВОНАЧАЛЬНАЯ ЗАГРУЗКА
   const loadSatellites = useCallback(async () => {
     try {
       setLoading(true);
@@ -13,24 +14,27 @@ export function useSatellites() {
 
       const data = await satellitesAPI.getAll();
 
-      // Transform API data to include positions if not already present
       const satellitesWithPositions = await Promise.all(
         data.map(async (satellite) => {
           try {
-            // ИСПРАВЛЕНО: используем norad_id вместо id
-            const position = await satellitesAPI.getPosition(satellite.norad_id);
+            // Загружаем и позицию, и орбиту сразу при старте
+            const [positionData, orbitData] = await Promise.all([
+              satellitesAPI.getPosition(satellite.norad_id),
+              satellitesAPI.getOrbit(satellite.norad_id)
+            ]);
+            
             return {
               ...satellite,
-              position: position.position,
-              latitude: position.latitude,
-              longitude: position.longitude,
-              altitude: position.altitude_km,
-              velocity: position.speed_kmh,
+              position: positionData.position,
+              latitude: positionData.latitude,
+              longitude: positionData.longitude,
+              altitude: positionData.altitude_km,
+              velocity: positionData.speed_kmh,
+              orbit_points: orbitData.points || [] // Добавляем точки орбиты!
             };
           } catch (err) {
-            // ИСПРАВЛЕНО: выводим norad_id в лог
-            console.warn(`Failed to load position for satellite ${satellite.norad_id}:`, err);
-            return satellite; // Возвращаем спутник без позиции, если произошла ошибка
+            console.warn(`Failed to load data for satellite ${satellite.norad_id}:`, err);
+            return satellite; 
           }
         })
       );
@@ -44,28 +48,32 @@ export function useSatellites() {
     }
   }, []);
 
+  // 2. ФОНОВОЕ ОБНОВЛЕНИЕ (ПОЛЛИНГ)
   const updateSatellitePosition = useCallback(async (noradId) => {
     try {
-      // ИСПРАВЛЕНО: передаем noradId
-      const position = await satellitesAPI.getPosition(noradId);
+      // ИСПОЛЬЗУЕМ noradId из аргумента функции
+      const [positionData, orbitData] = await Promise.all([
+        satellitesAPI.getPosition(noradId),
+        satellitesAPI.getOrbit(noradId)
+      ]);
 
       setSatellites(prev =>
         prev.map(sat =>
-          // ИСПРАВЛЕНО: сравниваем sat.norad_id с переданным noradId
           sat.norad_id === noradId
             ? {
                 ...sat,
-                position: position.position,
-                latitude: position.latitude,
-                longitude: position.longitude,
-                altitude: position.altitude_km,
-                velocity: position.speed_kmh,
+                position: positionData.position,       // ИСПОЛЬЗУЕМ positionData
+                latitude: positionData.latitude,
+                longitude: positionData.longitude,
+                altitude: positionData.altitude_km,
+                velocity: positionData.speed_kmh,
+                orbit_points: orbitData.points || sat.orbit_points 
               }
             : sat
         )
       );
 
-      return position;
+      return positionData; // Возвращаем правильную переменную
     } catch (err) {
       console.error(`Failed to update position for satellite ${noradId}:`, err);
       throw err;

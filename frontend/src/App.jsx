@@ -1,3 +1,4 @@
+import * as THREE from 'three';
 import { useState, useEffect, useRef } from 'react';
 import Scene from './components/3d/Scene';
 import Sidebar from './components/ui/Sidebar';
@@ -20,9 +21,9 @@ function App() {
         const textureLoader = new THREE.TextureLoader();
 
         const [colorMap, bumpMap, specularMap] = await Promise.all([
-          textureLoader.loadAsync('/textures/earth_color.jpg'),
-          textureLoader.loadAsync('/textures/earth_bump.jpg'),
-          textureLoader.loadAsync('/textures/earth_specular.jpg'),
+          textureLoader.loadAsync('/textures/8k_earth_daymap.jpg'),
+          textureLoader.loadAsync('/textures/8k_earth_normal_map.jpeg'),
+          textureLoader.loadAsync('/textures/8k_earth_specular_map.jpeg'),
         ]);
 
         setTextures({
