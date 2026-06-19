@@ -1,0 +1,71 @@
+.satellite-info {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  width: 300px;
+  background: rgba(0, 0, 0, 0.9);
+  border: 1px solid rgba(0, 255, 255, 0.3);
+  border-radius: 8px;
+  padding: 20px;
+  color: #ffffff;
+  font-family: system-ui, -apple-system, sans-serif;
+  z-index: 100;
+  box-shadow: 0 4px 20px rgba(0, 255, 255, 0.2);
+}
+
+.close-btn {
+  position: absolute;
+  top: 10px;
+  right: 15px;
+  background: none;
+  border: none;
+  color: #ffffff;
+  font-size: 28px;
+  cursor: pointer;
+  padding: 0;
+  width: 30px;
+  height: 30px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0.7;
+  transition: opacity 0.2s;
+}
+
+.close-btn:hover {
+  opacity: 1;
+}
+
+.satellite-name {
+  margin: 0 0 20px 0;
+  font-size: 20px;
+  font-weight: 600;
+  color: #00ffff;
+  padding-right: 30px;
+}
+
+.satellite-details {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.detail-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-bottom: 8px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.label {
+  font-size: 14px;
+  opacity: 0.7;
+  font-weight: 500;
+}
+
+.value {
+  font-size: 14px;
+  font-weight: 600;
+  color: #00ffff;
+}
