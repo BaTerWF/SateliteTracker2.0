@@ -45,8 +45,8 @@ function App() {
   usePolling(
     () => {
       satellites.forEach((satellite) => {
-        updateSatellitePosition(satellite.id).catch((err) => {
-          console.warn(`Failed to update satellite ${satellite.id}:`, err);
+        updateSatellitePosition(satellite.norad_id).catch((err) => {
+          console.warn(`Failed to update satellite ${satellite.norad_id}:`, err);
         });
       });
     },

@@ -1,16 +1,24 @@
 import axios from 'axios';
 
 const apiClient = axios.create({
+  // Задаем базовый URL для всех запросов
   baseURL: import.meta.env.VITE_API_URL || 'http://localhost:8000',
   headers: {
     'Content-Type': 'application/json',
   },
 });
 
-// Request interceptor
+// Request interceptor: срабатывает перед каждой отправкой запроса
 apiClient.interceptors.request.use(
   (config) => {
-    // Can add auth tokens here if needed
+    // Достаем ключ из переменных окружения Vite
+    const apiKey = import.meta.env.VITE_API_KEY;
+    
+    // Если ключ есть, добавляем его в заголовки
+    if (apiKey) {
+      config.headers['X-API-Key'] = apiKey;
+    }
+    
     return config;
   },
   (error) => {
@@ -18,14 +26,14 @@ apiClient.interceptors.request.use(
   }
 );
 
-// Response interceptor
+// Response interceptor: обрабатывает ответы сервера
 apiClient.interceptors.response.use(
   (response) => {
+    // Сразу возвращаем data, чтобы не писать res.data в компонентах
     return response.data;
   },
   (error) => {
-    // Can add global error handling here
-    console.error('API Error:', error);
+    console.error('API Error:', error.response?.data || error.message);
     return Promise.reject(error);
   }
 );

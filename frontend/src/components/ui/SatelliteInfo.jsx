@@ -35,7 +35,7 @@ export default function SatelliteInfo({ satellite, onClose }) {
         {satellite.velocity && (
           <div className="detail-row">
             <span className="label">Velocity:</span>
-            <span className="value">{satellite.velocity.toFixed(2)} km/s</span>
+            <span className="value">{satellite.velocity.toFixed(2)} km/h</span>
           </div>
         )}
 

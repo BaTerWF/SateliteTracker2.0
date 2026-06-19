@@ -17,18 +17,20 @@ export function useSatellites() {
       const satellitesWithPositions = await Promise.all(
         data.map(async (satellite) => {
           try {
-            const position = await satellitesAPI.getPosition(satellite.id);
+            // ИСПРАВЛЕНО: используем norad_id вместо id
+            const position = await satellitesAPI.getPosition(satellite.norad_id);
             return {
               ...satellite,
               position: position.position,
               latitude: position.latitude,
               longitude: position.longitude,
-              altitude: position.altitude,
-              velocity: position.velocity,
+              altitude: position.altitude_km,
+              velocity: position.speed_kmh,
             };
           } catch (err) {
-            console.warn(`Failed to load position for satellite ${satellite.id}:`, err);
-            return satellite;
+            // ИСПРАВЛЕНО: выводим norad_id в лог
+            console.warn(`Failed to load position for satellite ${satellite.norad_id}:`, err);
+            return satellite; // Возвращаем спутник без позиции, если произошла ошибка
           }
         })
       );
@@ -42,20 +44,22 @@ export function useSatellites() {
     }
   }, []);
 
-  const updateSatellitePosition = useCallback(async (satelliteId) => {
+  const updateSatellitePosition = useCallback(async (noradId) => {
     try {
-      const position = await satellitesAPI.getPosition(satelliteId);
+      // ИСПРАВЛЕНО: передаем noradId
+      const position = await satellitesAPI.getPosition(noradId);
 
       setSatellites(prev =>
         prev.map(sat =>
-          sat.id === satelliteId
+          // ИСПРАВЛЕНО: сравниваем sat.norad_id с переданным noradId
+          sat.norad_id === noradId
             ? {
                 ...sat,
                 position: position.position,
                 latitude: position.latitude,
                 longitude: position.longitude,
-                altitude: position.altitude,
-                velocity: position.velocity,
+                altitude: position.altitude_km,
+                velocity: position.speed_kmh,
               }
             : sat
         )
@@ -63,7 +67,7 @@ export function useSatellites() {
 
       return position;
     } catch (err) {
-      console.error(`Failed to update position for satellite ${satelliteId}:`, err);
+      console.error(`Failed to update position for satellite ${noradId}:`, err);
       throw err;
     }
   }, []);
